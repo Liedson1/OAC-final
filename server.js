@@ -30,10 +30,7 @@ io.on('connection', (socket) => {
     });
 });
 
-function enviarDadosParaClientes() {
-    const dados = obterDadosDoSensor();
-    io.emit('dados-sensor', dados);
-}
+
 // Rota para servir o arquivo index.html
 app.get('/', (req, res) => {
     // Use o módulo path para construir o caminho absoluto até o arquivo
@@ -46,9 +43,11 @@ app.get('/', (req, res) => {
 // Rota para receber dados do Wokwi por meio de uma solicitação POST
 app.post('/dados-do-wokwi', (req, res) => {
     const { temperatura, umidade } = req.body;
-    dadosDoSensor.push({ temperatura, umidade });
+    io.emit('dados-sensor', { temperatura, umidade });
+    console.log('Dados recebidos do Wokwi - Temperatura:', temperatura, 'Umidade:', umidade);
     res.status(200).json({ message: 'Dados recebidos com sucesso!' });
 });
+
 
 server.listen(PORT, () => {
     console.log(`Servidor Socket.IO está ouvindo na porta ${PORT}`);
