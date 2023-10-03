@@ -1,0 +1,37 @@
+body {
+    font-family: Andale Mono, monospace;
+    background-color: #2F0468;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #24064C;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    text-align: center;
+    color: #fff;
+}
+
+.data {
+    text-align: center;
+    color: #fff;
+}
+
+canvas {
+    margin-top: 20px;
+    color: #fff;
+}
+
+#temperature,
+#humidity {
+    font-family: Andale Mono, monospace;
+    color: white; /* Cor dos números como branco */
+    font-size: 3rem; /* Tamanho da fonte (ajuste conforme necessário) */
+}

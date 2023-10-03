@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leituras de Temperatura e Umidade</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Leituras de Temperatura e Umidade</h1>
+    <div class="data">
+        <!-- Adicionamos a classe "temperature" para o elemento -->
+        <p><span id="celsius" class="temperature">--°C</span></p>
+        <p>Umidade: <span id="humidity">--</span>%</p>
+    </div>
+    <canvas id="chart" width="400" height="200"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
