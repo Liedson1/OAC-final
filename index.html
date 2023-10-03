@@ -2,21 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leituras de Temperatura e Umidade</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Informações do Sensor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
 </head>
 <body>
-<div class="container">
-    <h1>Leituras de Temperatura e Umidade</h1>
-    <div class="data">
-        <!-- Adicionamos a classe "temperature" para o elemento -->
-        <p><span id="celsius" class="temperature">--°C</span></p>
-        <p>Umidade: <span id="humidity">--</span>%</p>
-    </div>
-    <canvas id="chart" width="400" height="200"></canvas>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="script.js"></script>
+<h1>Informações do Sensor</h1>
+<p>Temperatura: <span id="temperatura"></span>°C</p>
+<p>Umidade: <span id="umidade"></span>%</p>
+
+<script>
+    const socket = io();
+
+    socket.on('dados-sensor', (dados) => {
+        console.log('Dados do sensor recebidos:', dados);
+
+        // Formate os números para ter apenas dois dígitos antes da vírgula
+        const temperaturaFormatada = dados.temperatura.toFixed(0);
+        const umidadeFormatada = dados.umidade.toFixed(0);
+
+        document.getElementById('temperatura').textContent = temperaturaFormatada;
+        document.getElementById('umidade').textContent = umidadeFormatada;
+    });
+</script>
 </body>
 </html>
