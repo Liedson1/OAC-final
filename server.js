@@ -8,20 +8,19 @@ const app = express();
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
 
 const io = socketIO(server, { cors: { origin: '*' } });
 
 // Array para armazenar os dados do sensor
-const dadosDoSensor = [];
+
 
 io.on('connection', (socket) => {
     console.log(`Cliente conectado: ${socket.id}`);
 
     // Inicie o envio de dados para este cliente assim que ele se conectar
     const interval = setInterval(() => {
-        enviarDadosParaClientes();
     }, 5000); // Envia dados a cada 5 segundos
 
     socket.on('disconnect', () => {
@@ -31,7 +30,7 @@ io.on('connection', (socket) => {
 });
 
 
-// Rota para servir o arquivo index.html
+app.use(express.static(__dirname))
 app.get('/', (req, res) => {
     // Use o módulo path para construir o caminho absoluto até o arquivo
     const indexPath = path.join(__dirname, 'index.html');

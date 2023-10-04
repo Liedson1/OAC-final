@@ -1,85 +1,100 @@
-// Simulando leituras de temperatura e umidade em tempo real
-function getTemperatureAndHumidity() {
-    // Substitua este código pela lógica de obtenção de dados reais
-    const temperature = Math.random() * 30 + 10; // Simulação de temperatura entre 10°C e 40°C
-    const humidity = Math.random() * 40 + 40; // Simulação de umidade entre 40% e 80%
-    return { temperature, humidity };
-}
+const { io } = require('socket.io-client');
 
-const temperatureElement = document.getElementById('temperature');
-const celsiusElement = document.getElementById('celsius'); // Elemento para exibir temperatura com "°C"
-const humidityElement = document.getElementById('humidity');
 
-function updateData() {
-    const { temperature, humidity } = getTemperatureAndHumidity();
+const socket = io();
 
-    // Atualize a temperatura no formato "XX°C"
-    celsiusElement.textContent = temperature.toFixed(2) + '°C';
+const $tempC = document.querySelector('.temp-c');
+const $humidity = document.querySelector('.hum');
 
-    // Atualize a temperatura sem o nome "Temperatura"
-    temperatureElement.textContent = temperature.toFixed(2);
 
-    // Atualize a umidade com dois dígitos após a vírgula
-    humidityElement.textContent = humidity.toFixed(2);
-}
 
-// Atualize os dados a cada 5 segundos (5000 ms)
-setInterval(updateData, 5000);
-
-// Configuração do gráfico usando a biblioteca Chart.js
-const ctx = document.getElementById('chart').getContext('2d');
-const data = {
-    labels: [],
-    datasets: [
-        {
-            label: 'Temperatura (°C)',
-            borderColor: 'rgb(255, 99, 132)',
-            data: [],
-        },
-        {
-            label: 'Umidade (%)',
-            borderColor: 'rgb(54, 162, 235)',
-            data: [],
-        },
-    ],
-};
-
-const config = {
+let tempChartCtx = document.getElementById('temp-chart').getContext('2d');
+let tempChart = new Chart(tempChartCtx, {
     type: 'line',
-    data: data,
+    data: {
+        labels: [],
+        datasets: [
+            {
+                label: 'Temperatura (°C)',
+                data: [],
+                borderColor: '#38bdf8',
+                backgroundColor: '#38bdf8',
+            },
+        ],
+    },
     options: {
+        responsive: true,
+        aspectRatio: 16 / 9,
         scales: {
             x: {
-                type: 'linear',
-                position: 'bottom',
+                display: true,
             },
             y: {
-                beginAtZero: true,
+                display: true,
+            },
+        },
+        plugins: {
+            legend: {
+                position: 'bottom',
             },
         },
     },
-};
+});
 
-const myChart = new Chart(ctx, config);
+let humChartCtx = document.getElementById('hum-chart').getContext('2d');
+let humChart = new Chart(humChartCtx, {
+    type: 'line',
+    data: {
+        labels: [],
+        datasets: [
+            {
+                label: 'Umidade (%)',
+                data: [],
+                borderColor: '#2dd4bf',
+                backgroundColor: '#2dd4bf',
+            },
+        ],
+    },
+    options: {
+        responsive: true,
+        aspectRatio: 16 / 9,
+        scales: {
+            x: {
+                display: true,
+            },
+            y: {
+                display: true,
+            },
+        },
+        plugins: {
+            legend: {
+                position: 'bottom',
+            },
+        },
+    },
+});
 
-// Adicione dados ao gráfico
-function addDataToChart() {
-    const { temperature, humidity } = getTemperatureAndHumidity();
-    const timestamp = new Date().toLocaleTimeString();
+socket.on('connect', () => {
+    console.log(`Conectado ao servidor Socket.IO`);
 
-    data.labels.push(timestamp);
-    data.datasets[0].data.push(temperature);
-    data.datasets[1].data.push(humidity);
+    socket.on('dados-sensor', (data) => {
+        const { temperatura, umidade } = data;
+        $tempC.innerHTML = temperatura.toFixed(1);
 
-    // Limite o gráfico a um número máximo de pontos (por exemplo, 10)
-    if (data.labels.length > 10) {
-        data.labels.shift();
-        data.datasets[0].data.shift();
-        data.datasets[1].data.shift();
-    }
+        $humidity.innerHTML = umidade;
 
-    myChart.update();
-}
+        const moment = new Date().toLocaleTimeString();
+        tempChart.data.labels.push(moment);
+        humChart.data.labels.push(moment);
 
-// Adicione dados ao gráfico a cada 10 segundos (10000 ms)
-setInterval(addDataToChart, 10000);
+        tempChart.data.datasets[0].data.push(temperatura);
+        humChart.data.datasets[0].data.push(umidade);
+
+        tempChart.update();
+        humChart.update();
+    });
+});
+
+socket.on('disconnect', () => {
+    console.log(`Desconectado do servidor Socket.IO`);
+});
