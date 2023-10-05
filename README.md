@@ -34,6 +34,3 @@ Para executar o projeto, siga estas etapas:
 
 Contribuições são bem-vindas! Sinta-se à vontade para melhorar este projeto ou adicionar recursos adicionais.
 
-## Licença
-
-Este projeto está licenciado sob a [Licença MIT](LICENSE).
