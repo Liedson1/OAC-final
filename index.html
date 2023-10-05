@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+<div class="weather-wrapper">
+    <div class="weather-card">
+        <div class="weather-icon sun"></div>
+        <h1><span id="temperatura">--</span>°C</h1>
+        <p>Temperatura</p>
+    </div>
+    <div class="weather-card">
+        <div class="weather-icon cloud"></div>
+        <h1><span id="umidade">--</span>%</h1>
+        <p>Humidade</p>
+    </div>
+</div>
+
+<div class="chart-container">
+    <canvas id="chart"></canvas>
+</div>
+
+
+
+<!-- Carregue o cliente Socket.IO a partir de um CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const socket = io(); // Cria uma instância do cliente Socket.IO
+
+    // Função para atualizar os dados na página
+    function atualizarDados(temperatura, umidade) {
+        document.getElementById('temperatura').textContent = temperatura.toFixed(0);
+        document.getElementById('umidade').textContent = umidade.toFixed(0);
+    }
+
+    // Ouvinte para o evento 'dados-sensor' enviado pelo servidor
+    socket.on('dados-sensor', (dados) => {
+        console.log('Dados do sensor recebidos:', dados);
+
+        // Chama a função para atualizar os dados na página
+        atualizarDados(dados.temperatura, dados.umidade);
+
+        // Chama a função para adicionar dados ao gráfico
+        addDataToChart(dados.temperatura, dados.umidade);
+    });
+
+    // Configuração do gráfico usando a biblioteca Chart.js
+    const ctx = document.getElementById('chart').getContext('2d');
+    const data = {
+        labels: [], // Your timestamp labels
+        datasets: [
+            {
+                label: 'Temperatura (°C)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: [], // Your temperature data
+            },
+            {
+                label: 'Umidade (%)',
+                borderColor: 'rgb(54, 162, 235)',
+                data: [], // Your humidity data
+            },
+        ],
+    };
+
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                },
+                y: {
+                    beginAtZero: true,
+                },
+            },
+        },
+    };
+
+    const myChart = new Chart(ctx, config);
+
+    // Adicione dados ao gráfico
+    function addDataToChart(temperature, humidity) {
+        const timestamp = new Date().toLocaleTimeString();
+
+        data.labels.push(timestamp);
+        data.datasets[0].data.push(temperature);
+        data.datasets[1].data.push(humidity);
+
+        // Limite o gráfico a um número máximo de pontos (por exemplo, 10)
+        if (data.labels.length > 10) {
+            data.labels.shift();
+            data.datasets[0].data.shift();
+            data.datasets[1].data.shift();
+        }
+
+        myChart.update();
+    }
+
+    // Adicione dados ao gráfico a cada 10 segundos (10000 ms)
+    setInterval(addDataToChart, 10000);
+</script>
+</body>
+</html>
