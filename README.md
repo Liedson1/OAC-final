@@ -4,7 +4,7 @@ Este projeto faz parte da disciplina de Organização e Arquitetura de Computado
 
 ## Descrição do Projeto
 
-Neste projeto, estamos desenvolvendo um sistema que coleta e exibe dados meteorológicos em tempo real. O sistema é composto por sensores que coletam informações como temperatura, umidade e outros dados climáticos. Esses dados são enviados para um servidor, que os armazena e os disponibiliza para exibição em um site.
+Neste projeto, estamos desenvolvendo um sistema que coleta e exibe dados meteorológicos em tempo real. O sistema é composto por sensores que coletam informações como temperatura, umidade. Esses dados são enviados para um servidor, que os armazena e os disponibiliza para exibição em um site.
 
 ## Tecnologias Utilizadas
 
